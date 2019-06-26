@@ -1,0 +1,11 @@
+## Interface: 80100
+## Title: MoveAnything AutoPosition
+## Author: LudiusMaximus
+## Notes: A simple MoveAnything plugin to |nautomatically position some windows.
+## RequiredDeps: MoveAnything
+## Version: 1.0
+## X-Donate: PayPal:ludiusmaximus@gmail.com
+## X-License: The MIT License (MIT)
+## X-Category: Miscellaneous
+
+main.lua
