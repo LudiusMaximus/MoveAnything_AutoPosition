@@ -363,15 +363,15 @@ local playerTalentFrameHooked = false
 local inspectFrameHooked = false
 addonLoadedFrame:RegisterEvent("ADDON_LOADED")
 addonLoadedFrame:SetScript("OnEvent", function(self, event, arg1, ...)
-  if arg1 == "Blizzard_ArchaeologyUI" and not archaeologyFrameHooked then
+  if not archaeologyFrameHooked and arg1 == "Blizzard_ArchaeologyUI" then
     hooksecurefunc(ArchaeologyFrame, "Show", frameCheck)
     hooksecurefunc(ArchaeologyFrame, "Hide", frameCheck)
     archaeologyFrameHooked = true
-  elseif arg1 == "Blizzard_TalentUI" and not playerTalentFrameHooked then
+  elseif not playerTalentFrameHooked and arg1 == "Blizzard_TalentUI" then
     hooksecurefunc(PlayerTalentFrame, "Show", frameCheck)
     hooksecurefunc(PlayerTalentFrame, "Hide", frameCheck)
     playerTalentFrameHooked = true
-  elseif arg1 == "Blizzard_InspectUI" and not inspectFrameHooked then
+  elseif not inspectFrameHooked and arg1 == "Blizzard_InspectUI" then
     hooksecurefunc(InspectFrame, "Show", frameCheck)
     hooksecurefunc(InspectFrame, "Hide", frameCheck)
     inspectFrameHooked = true
