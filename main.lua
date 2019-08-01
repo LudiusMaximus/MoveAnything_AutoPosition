@@ -40,7 +40,7 @@ local function frameCheck(f, ...)
 
   -- SpellBookFrame is always displayed with a slight offset.
   opt = MovAny:GetUserData(SpellBookFrame:GetName(), nil, true)
-  opt.pos = {"TOPLEFT", "MerchantFrame", "TOPLEFT", 58, 41}
+  opt.pos = {"TOPLEFT", "MerchantFrame", "TOPLEFT", 58, 36}
   MovAny.Position:Apply(opt, SpellBookFrame)
 
 
@@ -242,10 +242,10 @@ local function frameCheck(f, ...)
       local opt = MovAny:GetUserData(rightmostFrame:GetName(), nil, true)
       -- If MerchantFrame_Type and CharacterFrame are open, the other frames move slightly right.
       if CharacterFrame:IsVisible() then
-        opt.pos = {"TOPLEFT", "CharacterFrame", "TOPLEFT", 58, 41}
+        opt.pos = {"TOPLEFT", "CharacterFrame", "TOPLEFT", 58, 36}
         xOffsetDressUpFrame = xOffsetDressUpFrame + 58
       else
-        opt.pos = {"TOPLEFT", visibleMerchantFrameType:GetName(), "TOPRIGHT", 18, 41}
+        opt.pos = {"TOPLEFT", visibleMerchantFrameType:GetName(), "TOPRIGHT", 18, 36}
       end
       MovAny.Position:Apply(opt, rightmostFrame)
 
