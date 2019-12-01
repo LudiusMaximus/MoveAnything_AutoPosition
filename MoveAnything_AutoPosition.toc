@@ -1,4 +1,4 @@
-## Interface: 80100
+## Interface: 80205
 ## Title: MoveAnything AutoPosition
 ## Author: LudiusMaximus
 ## Notes: A simple MoveAnything plugin to |nautomatically position some windows.
