@@ -6,7 +6,11 @@
 
 local function frameCheck(f, ...)
 
-  -- print(f:GetName())
+  -- if f:IsVisible() then
+    -- print("Opening", f:GetName())
+  -- else
+    -- print("Closing", f:GetName())
+  -- end
 
   -- Reset to defaults. I.e. align CharacterFrame, MailFrame, ClassTrainerFrame,
   -- DressUpFrame and SpellBookFrame according to MerchantFrame.
@@ -27,7 +31,7 @@ local function frameCheck(f, ...)
     opt.pos = {"TOPLEFT", "MerchantFrame", "TOPLEFT", 0, 0}
     MovAny.Position:Apply(opt, InspectFrame)
   end
-  
+
   if ClassTrainerFrame then
     opt = MovAny:GetUserData(ClassTrainerFrame:GetName(), nil, true)
     opt.pos = {"TOPLEFT", "MerchantFrame", "TOPLEFT", 0, 0}
@@ -49,75 +53,110 @@ local function frameCheck(f, ...)
   local openingTradeSkillFrameType = nil
   local visibleMerchantFrameType = nil
 
+  -- Remember for later.
+  local rightmostFrame = nil
+
+
+  -- If any but these frames is opened, hide the AuctionHouseFrame.
+  if f:IsVisible()
+     and not (AuctionHouseFrame and f == AuctionHouseFrame)
+     and not (DressUpFrame and f == DressUpFrame)
+     and not (CharacterFrame and f == CharacterFrame)
+     and not (PaperDollFrame and f == PaperDollFrame)
+     and AuctionHouseFrame and AuctionHouseFrame:IsVisible() then
+
+    AuctionHouseFrame:Hide()
+  end
+
+
+
   -- Make TradeSkillFrame_Type frames mutually exclusive.
-  if f == TradeSkillFrame then
-    if TradeSkillFrame:IsVisible() then
-      openingTradeSkillFrameType = TradeSkillFrame
-      if ArchaeologyFrame and ArchaeologyFrame:IsVisible() then ArchaeologyFrame:Hide() end
-      if PlayerTalentFrame and PlayerTalentFrame:IsVisible() then PlayerTalentFrame:Hide() end
-    end
-    
-  elseif f == ArchaeologyFrame then
-    if ArchaeologyFrame:IsVisible() then
-      openingTradeSkillFrameType = ArchaeologyFrame
-      if TradeSkillFrame and TradeSkillFrame:IsVisible() then TradeSkillFrame:Hide() end
-      if PlayerTalentFrame and PlayerTalentFrame:IsVisible() then PlayerTalentFrame:Hide() end
-    end
-    
-  elseif f == PlayerTalentFrame then
-    if PlayerTalentFrame:IsVisible() then
-      openingTradeSkillFrameType = PlayerTalentFrame
-      if TradeSkillFrame and TradeSkillFrame:IsVisible() then TradeSkillFrame:Hide() end
-      if ArchaeologyFrame and ArchaeologyFrame:IsVisible() then ArchaeologyFrame:Hide() end
-    end
+  if f == TradeSkillFrame and TradeSkillFrame:IsVisible() then
+    openingTradeSkillFrameType = TradeSkillFrame
+    if ArchaeologyFrame and ArchaeologyFrame:IsVisible() then ArchaeologyFrame:Hide() end
+    if PlayerTalentFrame and PlayerTalentFrame:IsVisible() then PlayerTalentFrame:Hide() end
+
+  elseif f == ArchaeologyFrame and ArchaeologyFrame:IsVisible() then
+    openingTradeSkillFrameType = ArchaeologyFrame
+    if TradeSkillFrame and TradeSkillFrame:IsVisible() then TradeSkillFrame:Hide() end
+    if PlayerTalentFrame and PlayerTalentFrame:IsVisible() then PlayerTalentFrame:Hide() end
+
+  elseif f == PlayerTalentFrame and PlayerTalentFrame:IsVisible() then
+    openingTradeSkillFrameType = PlayerTalentFrame
+    if TradeSkillFrame and TradeSkillFrame:IsVisible() then TradeSkillFrame:Hide() end
+    if ArchaeologyFrame and ArchaeologyFrame:IsVisible() then ArchaeologyFrame:Hide() end
 
 
   -- Make MerchantFrame_Type frames mutually exclusive.
-  elseif f == MerchantFrame then
-    if MerchantFrame:IsVisible() then
-      visibleMerchantFrameType = MerchantFrame
-      MailFrame:Hide()
-      TradeFrame:Hide()
-      if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
-      if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
-    end
-    
-  elseif f == MailFrame then
-    if MailFrame:IsVisible() then
-      visibleMerchantFrameType = MailFrame
-      MerchantFrame:Hide()
-      TradeFrame:Hide()
-      if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
-      if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
-    end
-    
-  elseif f == TradeFrame then
-    if TradeFrame:IsVisible() then
-      visibleMerchantFrameType = TradeFrame
-      MerchantFrame:Hide()
-      MailFrame:Hide()
-      if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
-      if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
-    end
-    
-  elseif f == InspectFrame then
-    if InspectFrame:IsVisible() then
-      visibleMerchantFrameType = InspectFrame
-      MerchantFrame:Hide()
-      MailFrame:Hide()
-      TradeFrame:Hide()
-      if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
-    end
-    
-  elseif f == ClassTrainerFrame then
-    if ClassTrainerFrame:IsVisible() then
-      visibleMerchantFrameType = ClassTrainerFrame
-      MerchantFrame:Hide()
-      MailFrame:Hide()
-      TradeFrame:Hide()
-      if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
-    end
-    
+  elseif f == MerchantFrame and MerchantFrame:IsVisible() then
+    visibleMerchantFrameType = MerchantFrame
+
+    if MailFrame and MailFrame:IsVisible() then MailFrame:Hide() end
+    if TradeFrame and TradeFrame:IsVisible() then TradeFrame:Hide() end
+
+    if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
+    if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
+
+  elseif f == MailFrame and MailFrame:IsVisible() then
+    visibleMerchantFrameType = MailFrame
+
+    if MerchantFrame and MerchantFrame:IsVisible() then MerchantFrame:Hide() end
+    if TradeFrame and TradeFrame:IsVisible() then TradeFrame:Hide() end
+
+    if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
+    if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
+
+  elseif f == TradeFrame and TradeFrame:IsVisible() then
+    visibleMerchantFrameType = TradeFrame
+
+    if MailFrame and MailFrame:IsVisible() then MailFrame:Hide() end
+    if MerchantFrame and MerchantFrame:IsVisible() then MerchantFrame:Hide() end
+
+    if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
+    if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
+
+  elseif f == InspectFrame and InspectFrame:IsVisible() then
+    visibleMerchantFrameType = InspectFrame
+
+    if MailFrame and MailFrame:IsVisible() then MailFrame:Hide() end
+    if MerchantFrame and MerchantFrame:IsVisible() then MerchantFrame:Hide() end
+    if TradeFrame and TradeFrame:IsVisible() then TradeFrame:Hide() end
+
+    if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
+
+  elseif f == ClassTrainerFrame and ClassTrainerFrame:IsVisible() then
+    visibleMerchantFrameType = ClassTrainerFrame
+
+    if MailFrame and MailFrame:IsVisible() then MailFrame:Hide() end
+    if MerchantFrame and MerchantFrame:IsVisible() then MerchantFrame:Hide() end
+    if TradeFrame and TradeFrame:IsVisible() then TradeFrame:Hide() end
+
+    if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
+
+
+  elseif f == AuctionHouseFrame and AuctionHouseFrame:IsVisible() then
+
+     -- Hide everything else!
+    if ArchaeologyFrame and ArchaeologyFrame:IsVisible() then ArchaeologyFrame:Hide() end
+    if PlayerTalentFrame and PlayerTalentFrame:IsVisible() then PlayerTalentFrame:Hide() end
+    if TradeSkillFrame and TradeSkillFrame:IsVisible() then TradeSkillFrame:Hide() end
+
+    if MailFrame and MailFrame:IsVisible() then MailFrame:Hide() end
+    if MerchantFrame and MerchantFrame:IsVisible() then MerchantFrame:Hide() end
+    if TradeFrame and TradeFrame:IsVisible() then TradeFrame:Hide() end
+
+    if ClassTrainerFrame and ClassTrainerFrame:IsVisible() then ClassTrainerFrame:Hide() end
+    if InspectFrame and InspectFrame:IsVisible() then InspectFrame:Hide() end
+
+    if SpellBookFrame and SpellBookFrame:IsVisible() then SpellBookFrame:Hide() end
+
+    opt = MovAny:GetUserData(AuctionHouseFrame:GetName(), nil, true)
+    opt.pos = {"TOPLEFT", "SpellBookFrame", "TOPLEFT", 0, 0}
+    MovAny.Position:Apply(opt, AuctionHouseFrame)
+
+    rightmostFrame = AuctionHouseFrame
+
+
   end
 
 
@@ -137,8 +176,7 @@ local function frameCheck(f, ...)
 
 
 
-  -- Remember for later.
-  local rightmostFrame = nil
+
 
   -- If MerchantFrame_Type or DressUpFrame are visible, also make
   -- SpellBookFrame mutually exclusive with TradeSkillFrame_Type.
@@ -181,11 +219,11 @@ local function frameCheck(f, ...)
       if SpellBookFrame:IsVisible() then
         SpellBookFrame:Hide()
       end
-      
+
     -- Otherwise it may be that SpellBookFrame is visible and we have to store it as rightmostFrame.
     elseif SpellBookFrame:IsVisible() then
       rightmostFrame = SpellBookFrame
-    
+
     end
 
   -- Otherwise the newly opened TradeSkillFrame_Type is our rightmostFrame.
@@ -212,6 +250,13 @@ local function frameCheck(f, ...)
   if CharacterFrame:IsVisible() then
     xOffsetDressUpFrame = CharacterFrame:GetWidth() + 18
   end
+
+
+  if AuctionHouseFrame and AuctionHouseFrame:IsVisible() then
+    xOffsetDressUpFrame = AuctionHouseFrame:GetWidth() + 58 + 18
+  end
+
+
 
   -- If MerchantFrame_Type is visible, everything is moved to the right of that MerchantFrame_Type.
   if visibleMerchantFrameType then
@@ -319,7 +364,7 @@ end
 hooksecurefunc(CharacterFrame, "Show", frameCheck)
 hooksecurefunc(CharacterFrame, "Hide", frameCheck)
 
--- Needed to react to resizing of CharacterFrame.
+-- Needed to react to resizing of CharacterFrame when switching tabs..
 hooksecurefunc(PaperDollFrame, "Show", frameCheck)
 hooksecurefunc(TokenFrame, "Show", frameCheck)
 hooksecurefunc(ReputationFrame, "Show", frameCheck)
@@ -343,6 +388,7 @@ hooksecurefunc(TradeFrame, "Show", frameCheck)
 hooksecurefunc(TradeFrame, "Hide", frameCheck)
 
 
+
 -- TradeSkillFrame is not existing until opened for the first time...
 local tradeSkillShowFrame = CreateFrame("Frame")
 local tradeSkillFrameHooked = false
@@ -361,6 +407,7 @@ local addonLoadedFrame = CreateFrame("Frame")
 local archaeologyFrameHooked = false
 local playerTalentFrameHooked = false
 local inspectFrameHooked = false
+local auctionHouseFrameHooked = false
 addonLoadedFrame:RegisterEvent("ADDON_LOADED")
 addonLoadedFrame:SetScript("OnEvent", function(self, event, arg1, ...)
   if not archaeologyFrameHooked and arg1 == "Blizzard_ArchaeologyUI" then
@@ -375,6 +422,10 @@ addonLoadedFrame:SetScript("OnEvent", function(self, event, arg1, ...)
     hooksecurefunc(InspectFrame, "Show", frameCheck)
     hooksecurefunc(InspectFrame, "Hide", frameCheck)
     inspectFrameHooked = true
+  elseif not inspectFrameHooked and arg1 == "Blizzard_AuctionHouseUI" then
+    hooksecurefunc(AuctionHouseFrame, "Show", frameCheck)
+    hooksecurefunc(AuctionHouseFrame, "Hide", frameCheck)
+    auctionHouseFrameHooked = true
   end
 end)
 
